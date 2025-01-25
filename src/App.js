@@ -19,7 +19,8 @@ function App() {
   const [error, setError] = useState("");
   const [selectedMovieId, setSelectedMovieId] = useState("");
   const [movie, setMovie] = useState({});
-  console.log({ heeeeh: selectedMovieId });
+  const [loadingDetails, setLoadingDetails] = useState(false);
+
   useEffect(
     function () {
       const controller = new AbortController();
@@ -50,7 +51,7 @@ function App() {
         setError("");
         return;
       }
-
+      setSelectedMovieId("");
       fetchMovies();
       return function () {
         controller.abort();
@@ -64,6 +65,7 @@ function App() {
     function () {
       async function fetchMovieDetails() {
         try {
+          setLoadingDetails(true);
           const res = await fetch(
             `${BASE_URL}?apikey=${KEY}&i=${selectedMovieId}`
           );
@@ -72,7 +74,9 @@ function App() {
           setMovie(data);
         } catch (err) {
           console.log(err);
+          setError(err.message);
         } finally {
+          setLoadingDetails(false);
         }
       }
       fetchMovieDetails();
@@ -100,12 +104,19 @@ function App() {
               setSelectedMovieId={setSelectedMovieId}
             />
           )}
-          {error && <Message message={error} />}
+          {error && !selectedMovieId && <Message message={error} />}
           {isLoading && <Loader />}
         </Box>
         <Box>
-          <WatchedSum />
-          {selectedMovieId && <MovieDetails movie={movie} />}
+          {!selectedMovieId && !loadingDetails && <WatchedSum />}
+          {selectedMovieId && !loadingDetails && (
+            <MovieDetails
+              movie={movie}
+              setSelectedMovieId={setSelectedMovieId}
+            />
+          )}
+          {loadingDetails && <Loader />}
+          {error && selectedMovieId && <Message message={error} />}
         </Box>
       </main>
     </div>
