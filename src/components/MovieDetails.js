@@ -1,7 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import StarRating from "./StarRating";
+import Loader from "./Loader";
+import Message from "./Message";
+import { BASE_URL, KEY } from "../config";
 
-function MovieDetails({ movie, setSelectedMovieId }) {
+function MovieDetails({
+  setSelectedMovieId,
+  onAddMovie,
+  selectedMovieId,
+  watchedUserRating,
+}) {
+  const [rating, setRating] = useState(0);
+  const [movie, setMovie] = useState({});
+  const [isloading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(
+    function () {
+      async function fetchMovieDetails() {
+        try {
+          setIsLoading(true);
+          const res = await fetch(
+            `${BASE_URL}?apikey=${KEY}&i=${selectedMovieId}`
+          );
+          const data = await res.json();
+          setMovie(data);
+        } catch (err) {
+          console.log(err);
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      fetchMovieDetails();
+    },
+    [selectedMovieId]
+  );
   const {
     Title: title,
     Poster: poster,
@@ -11,7 +45,31 @@ function MovieDetails({ movie, setSelectedMovieId }) {
     Plot: plot,
     Actors: actors,
     Director: director,
+    Year: year,
   } = movie;
+
+  function handleAddWatchedMovie() {
+    const updatedMovie = {
+      imdbID: selectedMovieId,
+      title,
+      year,
+      poster,
+      imdbRating: Number(imdbRating),
+      runtime: Number(runtime.split(" ").at(0)),
+      userRating: rating,
+    };
+    onAddMovie(updatedMovie);
+    setRating(0);
+  }
+  useEffect(
+    function () {
+      setRating(0);
+    },
+    [selectedMovieId]
+  );
+  if (isloading) return <Loader />;
+  if (error) return <Message message={error} />;
+
   return (
     <>
       <header className="movie-details">
@@ -33,8 +91,18 @@ function MovieDetails({ movie, setSelectedMovieId }) {
 
       <section className="section_details">
         <div className="rating">
-          <StarRating />
-          <button className="rate_btn">+Add to list</button>
+          {watchedUserRating ? (
+            <p>You rated with movie {watchedUserRating}⭐</p>
+          ) : (
+            <>
+              <StarRating size={24} onSetRate={setRating} />
+              {rating > 0 && (
+                <button className="rate_btn" onClick={handleAddWatchedMovie}>
+                  +Add to list
+                </button>
+              )}
+            </>
+          )}
         </div>
         <p>
           <em>{plot}</em>

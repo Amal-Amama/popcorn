@@ -8,6 +8,7 @@ function Movie({ movie, setSelectedMovieId }) {
     Year: year,
     imdbID: imdbID,
   } = movie;
+
   return (
     <li className="movie" onClick={() => setSelectedMovieId(imdbID)}>
       <img src={poster} alt={`film ${title}`} width={40} height={58.8} />

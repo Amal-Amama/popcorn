@@ -8,19 +8,30 @@ import Loader from "./components/Loader";
 import Message from "./components/Message";
 import WatchedSum from "./components/WatchedSum";
 import MovieDetails from "./components/MovieDetails";
-
-const BASE_URL = "http://www.omdbapi.com/";
-const KEY = "50702ac0";
+import { BASE_URL, KEY } from "./config";
 
 function App() {
   const [movies, setMovies] = useState([]);
+  const [watchedMovies, setWatchedMovies] = useState(function () {
+    const storedValues = localStorage.getItem("watched");
+    return storedValues ? JSON.parse(storedValues) : [];
+  });
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedMovieId, setSelectedMovieId] = useState("");
-  const [movie, setMovie] = useState({});
-  const [loadingDetails, setLoadingDetails] = useState(false);
 
+  function handleAddWatchedMovie(movie) {
+    if (watchedMovies.map((movie) => movie.imdbID).includes(movie.imdbID))
+      return;
+    setWatchedMovies((watchedMovies) => [movie, ...watchedMovies]);
+  }
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watchedMovies));
+    },
+    [watchedMovies]
+  );
   useEffect(
     function () {
       const controller = new AbortController();
@@ -61,28 +72,17 @@ function App() {
   );
   const numMovies = movies.length;
 
-  useEffect(
-    function () {
-      async function fetchMovieDetails() {
-        try {
-          setLoadingDetails(true);
-          const res = await fetch(
-            `${BASE_URL}?apikey=${KEY}&i=${selectedMovieId}`
-          );
-          const data = await res.json();
-          console.log({ movieData: data });
-          setMovie(data);
-        } catch (err) {
-          console.log(err);
-          setError(err.message);
-        } finally {
-          setLoadingDetails(false);
-        }
-      }
-      fetchMovieDetails();
-    },
-    [selectedMovieId]
-  );
+  // const v = () => {
+  //   const storedValues = localStorage.getItem("watched");
+  //   return storedValues ? JSON.parse(storedValues) : [];
+  // };
+  // console.log({
+  //   returnedValue: v(),
+  // });
+  const watchedUserRating = watchedMovies.find(
+    (movie) => movie.imdbID === selectedMovieId
+  )?.userRating;
+
   return (
     <div className="App">
       <header>
@@ -108,15 +108,16 @@ function App() {
           {isLoading && <Loader />}
         </Box>
         <Box>
-          {!selectedMovieId && !loadingDetails && <WatchedSum />}
-          {selectedMovieId && !loadingDetails && (
+          {!selectedMovieId ? (
+            <WatchedSum />
+          ) : (
             <MovieDetails
-              movie={movie}
               setSelectedMovieId={setSelectedMovieId}
+              selectedMovieId={selectedMovieId}
+              onAddMovie={handleAddWatchedMovie}
+              watchedUserRating={watchedUserRating}
             />
           )}
-          {loadingDetails && <Loader />}
-          {error && selectedMovieId && <Message message={error} />}
         </Box>
       </main>
     </div>
