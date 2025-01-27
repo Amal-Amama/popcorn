@@ -224,14 +224,7 @@ main {
   align-items: center;
   margin-bottom: 2rem;
 }
-/* .stars p {
-  margin-left: 1rem;
-  color: #ffb703;
-} */
-/* .star {
-  width: 1.6rem;
-  height: auto;
-} */
+
 .rating {
   background-color: var(--color-background-100);
   border-radius: 0.9rem;
@@ -264,4 +257,43 @@ main {
   font-weight: bold;
   z-index: 999;
   box-shadow: 0px 20px 20px var(--color-background-500);
+}
+.watchedMovie {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  padding: 2rem 0;
+  width: 100%;
+  border-bottom: 1px solid var(--color-background-100);
+}
+.watchedMovie img {
+  justify-self: center;
+  grid-row: 1/-1;
+}
+.watchedMovie div {
+  display: flex;
+  gap: 1.6rem;
+  grid-column: 2/3;
+}
+.watchedMovie h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+.watchedMovie p {
+  font-size: 1.6rem;
+}
+.watchedMovie button {
+  background-color: var(--color-red);
+  border: var(--color-background-100);
+  color: var(--color-background-100);
+  border-radius: 50%;
+  height: 2rem;
+  width: 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.watchedMovie button:hover {
+  background-color: var(--color-red-dark);
 }

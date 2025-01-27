@@ -9,6 +9,7 @@ import Message from "./components/Message";
 import WatchedSum from "./components/WatchedSum";
 import MovieDetails from "./components/MovieDetails";
 import { BASE_URL, KEY } from "./config";
+import WatchedMoviesList from "./components/WatchedMoviesList";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -25,6 +26,12 @@ function App() {
     if (watchedMovies.map((movie) => movie.imdbID).includes(movie.imdbID))
       return;
     setWatchedMovies((watchedMovies) => [movie, ...watchedMovies]);
+  }
+  function handleDeleteWatchedMovie(id) {
+    console.log({ idDelete: id });
+    setWatchedMovies((watchedList) =>
+      watchedList.filter((movie) => movie.imdbID !== id)
+    );
   }
   useEffect(
     function () {
@@ -72,13 +79,6 @@ function App() {
   );
   const numMovies = movies.length;
 
-  // const v = () => {
-  //   const storedValues = localStorage.getItem("watched");
-  //   return storedValues ? JSON.parse(storedValues) : [];
-  // };
-  // console.log({
-  //   returnedValue: v(),
-  // });
   const watchedUserRating = watchedMovies.find(
     (movie) => movie.imdbID === selectedMovieId
   )?.userRating;
@@ -109,7 +109,13 @@ function App() {
         </Box>
         <Box>
           {!selectedMovieId ? (
-            <WatchedSum />
+            <>
+              <WatchedSum watchedMovies={watchedMovies} />
+              <WatchedMoviesList
+                watchedMovies={watchedMovies}
+                onDeleteWatchedMovie={handleDeleteWatchedMovie}
+              />
+            </>
           ) : (
             <MovieDetails
               setSelectedMovieId={setSelectedMovieId}

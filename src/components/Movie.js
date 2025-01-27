@@ -1,13 +1,7 @@
 import React from "react";
 
 function Movie({ movie, setSelectedMovieId }) {
-  const {
-    Poster: poster,
-    Type: type,
-    Title: title,
-    Year: year,
-    imdbID: imdbID,
-  } = movie;
+  const { Poster: poster, Title: title, Year: year, imdbID } = movie;
 
   return (
     <li className="movie" onClick={() => setSelectedMovieId(imdbID)}>

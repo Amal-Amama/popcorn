@@ -1,21 +1,36 @@
 import React from "react";
 
-function WatchedSum() {
+const average = (arr) => {
+  return arr.reduce(function (acc, cur) {
+    return (acc + cur) / arr.length;
+  }, 0);
+};
+
+function WatchedSum({ watchedMovies }) {
+  console.log({ watchedMovies: watchedMovies });
+  const avgImdbRating = average(watchedMovies.map((movie) => movie.imdbRating));
+  const avgUserRating = average(watchedMovies.map((movie) => movie.userRating));
+  const avgRuntime = average(watchedMovies.map((movie) => movie.runtime));
+
   return (
     <div className="summary">
       <h2>movies you watched</h2>
       <div>
         <p>
-          <span>#️⃣</span>watched
+          <span>#️⃣</span> {watchedMovies.length}{" "}
+          {watchedMovies.length === 1 ? "movie" : "movies"}
         </p>
         <p>
-          <span>⭐</span>imdbtotal
+          <span>⭐</span>
+          {avgImdbRating.toFixed(2)}
         </p>
         <p>
-          <span>🌟</span>userRatingtotal
+          <span>🌟</span>
+          {avgUserRating.toFixed(2)}
         </p>
         <p>
-          <span>⏳</span>runtime
+          <span>⏳</span>
+          {avgRuntime.toFixed(2)}
         </p>
       </div>
     </div>
