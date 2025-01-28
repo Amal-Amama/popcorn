@@ -1,4 +1,5 @@
 import React from "react";
+import { useWatched } from "../contexts/WatchedMoviesContext";
 
 const average = (arr) => {
   return arr.reduce(function (acc, cur) {
@@ -6,8 +7,8 @@ const average = (arr) => {
   }, 0);
 };
 
-function WatchedSum({ watchedMovies }) {
-  console.log({ watchedMovies: watchedMovies });
+function WatchedSum() {
+  const { watchedMovies } = useWatched();
   const avgImdbRating = average(watchedMovies.map((movie) => movie.imdbRating));
   const avgUserRating = average(watchedMovies.map((movie) => movie.userRating));
   const avgRuntime = average(watchedMovies.map((movie) => movie.runtime));

@@ -1,7 +1,9 @@
 import React from "react";
+import { useWatched } from "./contexts/WatchedMoviesContext";
 
-function WatchedMovie({ movie, onDeleteWatchedMovie }) {
+function WatchedMovie({ movie }) {
   const { imdbID, imdbRating, poster, runtime, title, userRating } = movie;
+  const { handleDeleteWatchedMovie } = useWatched();
   return (
     <div className="watchedMovie">
       <img
@@ -25,7 +27,7 @@ function WatchedMovie({ movie, onDeleteWatchedMovie }) {
           {runtime}
         </p>
       </div>
-      <button onClick={() => onDeleteWatchedMovie(imdbID)}>x</button>
+      <button onClick={() => handleDeleteWatchedMovie(imdbID)}>x</button>
     </div>
   );
 }

@@ -10,30 +10,14 @@ import WatchedSum from "./components/WatchedSum";
 import MovieDetails from "./components/MovieDetails";
 import WatchedMoviesList from "./components/WatchedMoviesList";
 import { useMovies } from "./hooks/useMovies";
-import { useLocalStorage } from "./hooks/useLocalStorage";
+import { WatchedProvider } from "./contexts/WatchedMoviesContext";
 
 function App() {
   const [query, setQuery] = useState("");
   const [selectedMovieId, setSelectedMovieId] = useState("");
   const { movies, error, isLoading } = useMovies(query, setSelectedMovieId);
-  const [watchedMovies, setWatchedMovies] = useLocalStorage("watched", []);
-
-  function handleAddWatchedMovie(movie) {
-    if (watchedMovies.map((movie) => movie.imdbID).includes(movie.imdbID))
-      return;
-    setWatchedMovies((watchedMovies) => [movie, ...watchedMovies]);
-  }
-  function handleDeleteWatchedMovie(id) {
-    setWatchedMovies((watchedList) =>
-      watchedList.filter((movie) => movie.imdbID !== id)
-    );
-  }
 
   const numMovies = movies.length;
-
-  const watchedUserRating = watchedMovies.find(
-    (movie) => movie.imdbID === selectedMovieId
-  )?.userRating;
 
   return (
     <div className="App">
@@ -55,24 +39,21 @@ function App() {
           {error && !selectedMovieId && <Message message={error} />}
           {isLoading && <Loader />}
         </Box>
-        <Box>
-          {!selectedMovieId ? (
-            <>
-              <WatchedSum watchedMovies={watchedMovies} />
-              <WatchedMoviesList
-                watchedMovies={watchedMovies}
-                onDeleteWatchedMovie={handleDeleteWatchedMovie}
+        <WatchedProvider>
+          <Box>
+            {!selectedMovieId ? (
+              <>
+                <WatchedSum />
+                <WatchedMoviesList />
+              </>
+            ) : (
+              <MovieDetails
+                setSelectedMovieId={setSelectedMovieId}
+                selectedMovieId={selectedMovieId}
               />
-            </>
-          ) : (
-            <MovieDetails
-              setSelectedMovieId={setSelectedMovieId}
-              selectedMovieId={selectedMovieId}
-              onAddMovie={handleAddWatchedMovie}
-              watchedUserRating={watchedUserRating}
-            />
-          )}
-        </Box>
+            )}
+          </Box>
+        </WatchedProvider>
       </main>
     </div>
   );

@@ -3,18 +3,15 @@ import StarRating from "./StarRating";
 import Loader from "./Loader";
 import Message from "./Message";
 import { BASE_URL, KEY } from "../config";
+import { useWatched } from "../contexts/WatchedMoviesContext";
 
-function MovieDetails({
-  setSelectedMovieId,
-  onAddMovie,
-  selectedMovieId,
-  watchedUserRating,
-}) {
+function MovieDetails({ setSelectedMovieId, selectedMovieId }) {
   const [rating, setRating] = useState(0);
   const [movie, setMovie] = useState({});
   const [isloading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const { handleAddMovie, watchedUserRating } = useWatched();
+  const watchedRating = watchedUserRating(selectedMovieId);
   useEffect(
     function () {
       async function fetchMovieDetails() {
@@ -58,7 +55,7 @@ function MovieDetails({
       runtime: Number(runtime.split(" ").at(0)),
       userRating: rating,
     };
-    onAddMovie(updatedMovie);
+    handleAddMovie(updatedMovie);
     setRating(0);
   }
   useEffect(
@@ -91,8 +88,8 @@ function MovieDetails({
 
       <section className="section_details">
         <div className="rating">
-          {watchedUserRating ? (
-            <p>You rated with movie {watchedUserRating}⭐</p>
+          {watchedRating ? (
+            <p>You rated with movie {watchedRating}⭐</p>
           ) : (
             <>
               <StarRating size={24} onSetRate={setRating} />
