@@ -2,7 +2,6 @@ import React from "react";
 
 function WatchedMovie({ movie, onDeleteWatchedMovie }) {
   const { imdbID, imdbRating, poster, runtime, title, userRating } = movie;
-  console.log({ mv: movie });
   return (
     <div className="watchedMovie">
       <img
